@@ -1,0 +1,21 @@
+{
+  "name": "jwtfed-provider",
+  "version": "1.0.0",
+  "description": "JWT Federation Demo Provider",
+  "main": "index.js",
+  "scripts": {
+    "main": "node server",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "jwt",
+    "openid connect",
+    "oauth"
+  ],
+  "author": "Andreas Åkre Solberg <andreas.solberg@uninett.no>",
+  "license": "ISC",
+  "dependencies": {
+    "jwtfed": "^1.0.0",
+    "oidc-provider": "^4.5.0"
+  }
+}
