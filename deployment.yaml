@@ -1,0 +1,39 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: jwtserver-provider
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: jwtserver-provider
+    spec:
+      containers:
+      - name: master
+        image: andreassolberg/jwtfedprovider:latest  # or just image: redishello:1.0
+        env:
+        - name: SECURE_KEY
+          value: "a462b6a2-77e8-4e08-a5ef-066c9b86b98b,5b4ca65b-ddc3-4b30-97b1-3a2bc34cd565"
+        - name: ISSUER
+          value: "https://serviceprovider.andreas.labs.uninett.no/"
+        resources:
+          requests:
+            cpu: 10m
+            memory: 50Mi
+        ports:
+        - containerPort: 3000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jwtserver-provider
+  labels:
+    app: jwtserver-provider
+spec:
+  type: NodePort
+  ports:
+    - port: 3000
+      protocol: TCP
+  selector:
+    app: jwtserver-provider
