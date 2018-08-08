@@ -6,10 +6,11 @@ const configuration = {
   // ... see available options /docs/configuration.md
 }
 
-assert(process.env.SECURE_KEY, 'process.env.SECURE_KEY missing')
-assert.equal(process.env.SECURE_KEY.split(',').length, 2, 'process.env.SECURE_KEY format invalid')
+assert(process.env.ISSUER, 'Environment variable ISSUER missing')
+assert(process.env.SECURE_KEY, 'Environment variable SECURE_KEY missing')
+assert.equal(process.env.SECURE_KEY.split(',').length, 2, 'Environment variable SECURE_KEY format invalid')
 
-const oidc = new Provider('http://localhost:3000', configuration);
+const oidc = new Provider(process.env.ISSUER, configuration);
 
 (async () => {
   await oidc.initialize({ adapter: JWTFedAdapter })
