@@ -26,7 +26,7 @@ const oidc = new Provider(process.env.ISSUER, configuration);
   await oidc.initialize({ adapter: JWTFedAdapter })
   // oidc.callback => express/nodejs style application callback (req, res)
   // oidc.app => koa2.x application
-  provider.use(router.routes())
+  oidc.use(router.routes())
   oidc.listen(3000)
   oidc.keys = process.env.SECURE_KEY.split(',')
   console.log('oidc-provider listening on port 3000, check http://localhost:3000/.well-known/openid-configuration')
