@@ -1,10 +1,20 @@
 
 const JWTFedAdapter = require('./JWTFedAdapter')
 const Provider = require('oidc-provider')
+const Router = require('koa-router')
 const assert = require('assert')
 const configuration = {
   // ... see available options /docs/configuration.md
 }
+
+
+
+const router = new Router();
+router.get('/', async (ctx, next) => {
+  ctx.body = 'OK!'
+})
+
+
 
 assert(process.env.ISSUER, 'Environment variable ISSUER missing')
 assert(process.env.SECURE_KEY, 'Environment variable SECURE_KEY missing')
@@ -16,7 +26,8 @@ const oidc = new Provider(process.env.ISSUER, configuration);
   await oidc.initialize({ adapter: JWTFedAdapter })
   // oidc.callback => express/nodejs style application callback (req, res)
   // oidc.app => koa2.x application
-  oidc.listen(3000);
+  provider.use(router.routes())
+  oidc.listen(3000)
   oidc.keys = process.env.SECURE_KEY.split(',')
   console.log('oidc-provider listening on port 3000, check http://localhost:3000/.well-known/openid-configuration')
 })().catch((err) => {
