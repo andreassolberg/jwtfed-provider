@@ -1,15 +1,15 @@
 
 const JWTFedAdapter = require('./JWTFedAdapter')
-const Provider = require('oidc-provider');
+const Provider = require('oidc-provider')
 const assert = require('assert')
 const configuration = {
   // ... see available options /docs/configuration.md
 }
 
-assert(process.env.SECURE_KEY, 'process.env.SECURE_KEY missing, run `heroku addons:create securekey`')
+assert(process.env.SECURE_KEY, 'process.env.SECURE_KEY missing')
 assert.equal(process.env.SECURE_KEY.split(',').length, 2, 'process.env.SECURE_KEY format invalid')
 
-const oidc = new Provider('http://localhost:3000', configuration)
+const oidc = new Provider('http://localhost:3000', configuration);
 
 (async () => {
   await oidc.initialize({ adapter: JWTFedAdapter })
@@ -26,3 +26,4 @@ const oidc = new Provider('http://localhost:3000', configuration)
 
 // http://localhost:3000/auth?client_id=foo&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Fcallback&scope=openid&state=af0ifjsldkj&nonce=n-0S6_WzA2Mj&response_type=code
 // http://localhost:3000/auth?client_id=foo&response_type=code&scope=openid
+// http://localhost:3000/auth?client_id=https%3A%2F%2Fserviceprovider.andreas.labs.uninett.no%2Fapplication1007&response_type=code&scope=openid

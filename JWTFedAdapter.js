@@ -1,9 +1,12 @@
 
-const ESFetcher = require('jwtfed').ESFetcher
+const
+  uuidv4 = require('uuid/v4'),
+  jwtfed = require('jwtfed'),
+  highlight = require('cli-highlight').highlight,
+  isUrl = require('is-url')
 
-const clients = [{ client_id: 'foo', client_secret: 'bar', redirect_uris: ['http://lvh.me/cb'] }];
-const clientCache = {}
 
+const demoMetadata = { client_id: 'https://serviceprovider.andreas.labs.uninett.no/application1007', client_secret: 'bar', redirect_uris: ['http://lvh.me/cb'] }
 const trustroot = [
     {
         "sub": "https://edugain.andreas.labs.uninett.no/openid",
@@ -30,28 +33,32 @@ const trustroot = [
     }
 ]
 
-
 class JWTFedAdapter {
 
   constructor(name) {
     this.name = name
-    this.jwtfed = new ESFetcher()
+    this.jwtfed = new jwtfed.ESFetcher()
+    this.clientCache = {}
   }
 
   async find(id) {
-    if (clientCache.hasOwnProperty(id)) {
+    if (this.clientCache.hasOwnProperty(id)) {
       console.log("Returning cache of  " + id)
-      return clientCache[id]
+      return this.clientCache[id]
     }
     console.log("Finding an client " + id)
-    console.log(JSON.stringify(clients[0], undefined, 2))
-
-    this.jwtfed.fetchChained(id)
+    if (!isUrl(id)) {
+      console.error("Client_id is not an url and was not cached")
+      // throw new Error("Could not find client")
+      return null
+    }
+    console.log("Finding an client " + id + " using JWT Federation")
+    return this.jwtfed.fetchChained(id)
       .then((list) => {
         console.log("Resulting list of entity statements from JWT Federation")
         console.log(JSON.stringify(list, undefined, 2), {language: "json"})
 
-        const tc = new TrustChain(trustroot)
+        const tc = new jwtfed.TrustChain(trustroot)
         list.forEach((es) => {
           tc.add(es)
         })
@@ -72,18 +79,35 @@ class JWTFedAdapter {
         console.log(highlight("Trusted JWKS:", {language: "markdown"}))
         console.log(highlight(JSON.stringify(metadata.jwks, undefined, 2), {language: "json"}))
 
+        metadata.metadata.redirect_uris = ['https://localhost:8888/']
+        metadata.metadata['client_secret'] = uuidv4()
+
+        let metadataobject = metadata.getMetadata()
+
+        metadataobject.jwks = {
+          keys: metadata.jwks.jwks
+        }
+        // delete metadataobject.jwks
+
+
+        // metadataobject = demoMetadata;
+
         console.log(highlight("Metadata:", {language: "markdown"}))
-        console.log(highlight(JSON.stringify(metadata.metadata, undefined, 2), {language: "json"}))
-        return metadata.metadata
+        console.log(highlight(JSON.stringify(metadataobject, undefined, 2), {language: "json"}))
 
+        return metadataobject
 
+      })
+      .catch((err) => {
+        console.error("===== ERROR =====")
+        console.error(err)
       })
 
   }
 
   async upsert(id, payload, expiresIn) {
     console.log("ID", id, " payload ", payload, " expiresin ", expiresIn)
-    clientCache[id] = payload
+    this.clientCache[id] = payload
     return payload
   }
 
@@ -93,7 +117,7 @@ class JWTFedAdapter {
 
   async destroy(id) {
     console.log("destroy()")
-    delete clientCache[0]
+    delete this.clientCache[0]
   }
 
   async consume(id) {

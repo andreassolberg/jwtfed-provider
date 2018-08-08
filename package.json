@@ -15,7 +15,10 @@
   "author": "Andreas Åkre Solberg <andreas.solberg@uninett.no>",
   "license": "ISC",
   "dependencies": {
-    "jwtfed": "^1.0.0",
-    "oidc-provider": "^4.5.0"
+    "highlight": "^0.2.4",
+    "is-url": "^1.2.4",
+    "jwtfed": "^1.2.1",
+    "oidc-provider": "^4.5.0",
+    "uuid": "^3.3.2"
   }
 }
