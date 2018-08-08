@@ -1,5 +1,11 @@
 
-const JWTFedAdapter = require('./JWTFedAdapter')
+const
+  JWTFedAdapter = require('./lib/JWTFedAdapter'),
+  JWTWebFinger = require('./lib/JWTWebFinger'),
+  morgan = require('morgan'),
+  nconf = require('nconf')
+
+
 const Provider = require('oidc-provider')
 const Router = require('koa-router')
 const assert = require('assert')
@@ -8,12 +14,21 @@ const configuration = {
 }
 
 
+nconf.argv()
+  .env({
+    "separator": '__',
+    "lowerCase": true
+  })
+  .file({ file: 'etc/config.json' })
 
-const router = new Router();
-router.get('/', async (ctx, next) => {
+
+
+const healthcheck = new Router();
+healthcheck.get('/', async (ctx, next) => {
   ctx.body = 'OK!'
 })
 
+const webfinger = new JWTWebFinger(nconf.get('iss'), nconf.get('metadata'), nconf.get('authorityHints'), nconf.get('kid'), nconf.get('jwks'))
 
 
 assert(process.env.ISSUER, 'Environment variable ISSUER missing')
@@ -26,7 +41,8 @@ const oidc = new Provider(process.env.ISSUER, configuration);
   await oidc.initialize({ adapter: JWTFedAdapter })
   // oidc.callback => express/nodejs style application callback (req, res)
   // oidc.app => koa2.x application
-  oidc.use(router.routes())
+  oidc.use(healthcheck.routes())
+  oidc.use(webfinger.routes())
   oidc.listen(3000)
   oidc.keys = process.env.SECURE_KEY.split(',')
   console.log('oidc-provider listening on port 3000, check http://localhost:3000/.well-known/openid-configuration')
