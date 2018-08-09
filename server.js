@@ -31,11 +31,12 @@ healthcheck.get('/', async (ctx, next) => {
 const webfinger = new JWTWebFinger(nconf.get('iss'), nconf.get('metadata'), nconf.get('authorityHints'), nconf.get('kid'), nconf.get('jwks'))
 
 
-assert(process.env.ISSUER, 'Environment variable ISSUER missing')
-assert(process.env.SECURE_KEY, 'Environment variable SECURE_KEY missing')
-assert.equal(process.env.SECURE_KEY.split(',').length, 2, 'Environment variable SECURE_KEY format invalid')
+nconf.required(['iss', 'secure_key']);
 
-const oidc = new Provider(process.env.ISSUER, configuration);
+assert(nconf.get('secure_key'), 'Environment variable SECURE_KEY missing')
+assert.equal(nconf.get('secure_key').split(',').length, 2, 'Environment variable SECURE_KEY format invalid')
+
+const oidc = new Provider(nconf.get('iss'), configuration);
 
 (async () => {
   await oidc.initialize({ adapter: JWTFedAdapter })
@@ -46,7 +47,8 @@ const oidc = new Provider(process.env.ISSUER, configuration);
   oidc.use(webfinger.routes())
 
   oidc.listen(3000)
-  oidc.keys = process.env.SECURE_KEY.split(',')
+  oidc.keys = nconf.get('secure_key').split(',')
+  console.log('oidc-provider issuer is ' + nconf.get('iss'))
   console.log('oidc-provider listening on port 3000, check http://localhost:3000/.well-known/openid-configuration')
 })().catch((err) => {
   console.error(err)

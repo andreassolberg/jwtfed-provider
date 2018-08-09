@@ -1,5 +1,5 @@
 {
-  "iss": "https://jwt-idp.andreas.labs.uninett.no/",
+  "iss": "https://idp.andreas.labs.uninett.no/",
   "authorityHints": ["https://feide.andreas.labs.uninett.no/jwtfederation"],
   "metadata": {
     "userTLDs": ["no"],
