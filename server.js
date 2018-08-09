@@ -2,7 +2,7 @@
 const
   JWTFedAdapter = require('./lib/JWTFedAdapter'),
   JWTWebFinger = require('./lib/JWTWebFinger'),
-  morgan = require('morgan'),
+  morgan = require('koa-morgan'),
   nconf = require('nconf')
 
 
@@ -41,8 +41,10 @@ const oidc = new Provider(process.env.ISSUER, configuration);
   await oidc.initialize({ adapter: JWTFedAdapter })
   // oidc.callback => express/nodejs style application callback (req, res)
   // oidc.app => koa2.x application
+  oidc.use(morgan('combined'))
   oidc.use(healthcheck.routes())
   oidc.use(webfinger.routes())
+
   oidc.listen(3000)
   oidc.keys = process.env.SECURE_KEY.split(',')
   console.log('oidc-provider listening on port 3000, check http://localhost:3000/.well-known/openid-configuration')
