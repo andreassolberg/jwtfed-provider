@@ -18,6 +18,11 @@ kubectl delete service jwtserver-provider
 kubectl apply -f deployment.yaml
 ```
 
+```
+kubectl delete deployment jwtserver-provider
+kubectl apply -f deployment.yaml
+```
+
 ## Local build process
 
 To test the docker build:
