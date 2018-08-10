@@ -5,7 +5,7 @@
     "userTLDs": ["no"],
     "id_token_signing_alg_values_supported": ["RS384", "RS512", "ES512"]
   },
-  "kid": "key1",
+  "kid": "idp",
   "jwks": [
     {
       "kty": "RSA",
@@ -17,7 +17,7 @@
         "verify"
       ],
       "ext": true,
-      "kid": "key1"
+      "kid": "idp"
     },
     {
       "kty": "RSA",
@@ -35,7 +35,7 @@
         "sign"
       ],
       "ext": true,
-      "kid": "key1"
+      "kid": "idp"
     }
   ]
 }
