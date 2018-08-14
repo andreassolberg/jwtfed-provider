@@ -3,7 +3,8 @@ const
   JWTFedAdapter = require('./lib/JWTFedAdapter'),
   JWTWebFinger = require('./lib/JWTWebFinger'),
   morgan = require('koa-morgan'),
-  nconf = require('nconf')
+  nconf = require('nconf'),
+  jose = require('node-jose')
 
 
 const Provider = require('oidc-provider')
@@ -39,7 +40,9 @@ assert.equal(nconf.get('secure_key').split(',').length, 2, 'Environment variable
 const oidc = new Provider(nconf.get('iss'), configuration);
 
 (async () => {
-  await oidc.initialize({ adapter: JWTFedAdapter })
+  const keystorejson = nconf.get('privateJwks')
+  const keystore = await jose.JWK.asKeyStore(keystorejson)
+  await oidc.initialize({ adapter: JWTFedAdapter, keystore })
   // oidc.callback => express/nodejs style application callback (req, res)
   // oidc.app => koa2.x application
   oidc.use(morgan('combined'))
