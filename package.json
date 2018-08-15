@@ -1,6 +1,6 @@
 {
   "name": "jwtfed-provider",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "description": "JWT Federation Demo Provider",
   "main": "index.js",
   "scripts": {
