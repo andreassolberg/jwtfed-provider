@@ -33,6 +33,11 @@ const oidc = new Provider(nconf.get('iss'), {});
   await oidc.initialize({ adapter: JWTFedAdapter, keystore })
   // oidc.callback => express/nodejs style application callback (req, res)
   // oidc.app => koa2.x application
+
+  // Needed in order for provider to understand that https is used when running behind a proxy
+  // Which is the case for this deployment in Google Cloud
+  oidc.app.proxy = true
+
   oidc.use(morgan('combined'))
   oidc.use(healthcheck.routes())
   oidc.use(webfinger.routes())
