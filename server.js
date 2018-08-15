@@ -6,14 +6,12 @@ const
   nconf = require('nconf'),
   jose = require('node-jose')
 
-
 const Provider = require('oidc-provider')
 const Router = require('koa-router')
 const assert = require('assert')
 const configuration = {
   // ... see available options /docs/configuration.md
 }
-
 
 nconf.argv()
   .env({
@@ -23,14 +21,12 @@ nconf.argv()
   .file({ file: 'etc/config.json' })
 
 
-
 const healthcheck = new Router();
 healthcheck.get('/', async (ctx, next) => {
   ctx.body = 'OK!'
 })
 
 const webfinger = new JWTWebFinger(nconf.get('iss'), nconf.get('metadata'), nconf.get('authorityHints'), nconf.get('kid'), nconf.get('jwks'))
-
 
 nconf.required(['iss', 'secure_key']);
 
@@ -57,8 +53,3 @@ const oidc = new Provider(nconf.get('iss'), configuration);
   console.error(err)
   process.exitCode = 1
 });
-
-
-// http://localhost:3000/auth?client_id=foo&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Fcallback&scope=openid&state=af0ifjsldkj&nonce=n-0S6_WzA2Mj&response_type=code
-// http://localhost:3000/auth?client_id=foo&response_type=code&scope=openid
-// http://localhost:3000/auth?client_id=https%3A%2F%2Fserviceprovider.andreas.labs.uninett.no%2Fapplication1007&response_type=code&scope=openid
