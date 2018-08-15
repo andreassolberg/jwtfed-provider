@@ -3,7 +3,7 @@
   "authorityHints": ["https://feide.andreas.labs.uninett.no/jwtfederation"],
   "metadata": {
     "issuer": "https://idp.andreas.labs.uninett.no/",
-    "authorization_endpoint": "http://idp.andreas.labs.uninett.no/auth",
+    "authorization_endpoint": "https://idp.andreas.labs.uninett.no/auth",
     "claims_parameter_supported": false,
     "claims_supported": ["sub", "sid", "auth_time", "iss"],
     "grant_types_supported": ["implicit", "authorization_code", "refresh_token"],
@@ -16,10 +16,10 @@
     "response_types_supported": ["code id_token token", "code id_token", "code token", "code", "id_token token", "id_token", "none"],
     "scopes_supported": ["openid", "offline_access"],
     "subject_types_supported": ["public"],
-    "token_endpoint": "http://idp.andreas.labs.uninett.no/token",
+    "token_endpoint": "https://idp.andreas.labs.uninett.no/token",
     "token_endpoint_auth_methods_supported": ["none", "private_key_jwt"],
     "token_endpoint_auth_signing_alg_values_supported": ["HS256", "HS384", "HS512", "RS256", "RS384", "RS512", "PS256", "PS384", "PS512", "ES256", "ES384", "ES512"],
-    "userinfo_endpoint": "http://idp.andreas.labs.uninett.no/me",
+    "userinfo_endpoint": "https://idp.andreas.labs.uninett.no/me",
     "userinfo_signing_alg_values_supported": ["none", "HS256", "HS384", "HS512", "RS256"],
     "code_challenge_methods_supported": ["S256"],
     "claim_types_supported": ["normal"]
