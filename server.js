@@ -23,6 +23,9 @@ const healthcheck = new Router();
 healthcheck.get('/', async (ctx, next) => {
   ctx.body = 'OK!'
 })
+healthcheck.get('/debug', async (ctx, next) => {
+  ctx.body = 'href:' + ctx.href
+})
 
 const webfinger = new JWTWebFinger(nconf.get('iss'), nconf.get('metadata'), nconf.get('authorityHints'), nconf.get('kid'), nconf.get('jwks'))
 const oidc = new Provider(nconf.get('iss'), {});
