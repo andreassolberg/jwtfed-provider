@@ -9,9 +9,6 @@ const
 const Provider = require('oidc-provider')
 const Router = require('koa-router')
 const assert = require('assert')
-const configuration = {
-  // ... see available options /docs/configuration.md
-}
 
 nconf.argv()
   .env({
@@ -19,7 +16,8 @@ nconf.argv()
     "lowerCase": true
   })
   .file({ file: 'etc/config.json' })
-
+  .required(['iss', 'secure_key']);
+assert.equal(nconf.get('secure_key').split(',').length, 2, 'Environment variable SECURE_KEY format invalid')
 
 const healthcheck = new Router();
 healthcheck.get('/', async (ctx, next) => {
@@ -27,13 +25,7 @@ healthcheck.get('/', async (ctx, next) => {
 })
 
 const webfinger = new JWTWebFinger(nconf.get('iss'), nconf.get('metadata'), nconf.get('authorityHints'), nconf.get('kid'), nconf.get('jwks'))
-
-nconf.required(['iss', 'secure_key']);
-
-assert(nconf.get('secure_key'), 'Environment variable SECURE_KEY missing')
-assert.equal(nconf.get('secure_key').split(',').length, 2, 'Environment variable SECURE_KEY format invalid')
-
-const oidc = new Provider(nconf.get('iss'), configuration);
+const oidc = new Provider(nconf.get('iss'), {});
 
 (async () => {
   const keystorejson = nconf.get('privateJwks')
